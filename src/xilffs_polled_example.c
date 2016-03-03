@@ -189,13 +189,13 @@ int FfsSdPolledExample(void)
 
 	/*
 	 * Pointer to beginning of file .
-	 */
+	 *
 	Res = f_lseek(&fil, 0);
 	if (Res) {
 		print("f_lseek failed\n\r");
 		handle_fresult(Res);
 		return XST_FAILURE;
-	}
+	}*/
 
 	/*
 	 * Write data to file.
