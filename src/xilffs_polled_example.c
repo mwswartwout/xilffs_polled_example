@@ -74,6 +74,7 @@
 
 /************************** Function Prototypes ******************************/
 int FfsSdPolledExample(void);
+void handle_fresult(FRESULT result);
 
 /************************** Variable Definitions *****************************/
 static FIL fil;		/* File object */
@@ -165,8 +166,9 @@ int FfsSdPolledExample(void)
 	 * Register volume work area, initialize device
 	 */
 	Res = f_mount(&fatfs, Path, 0);
-
 	if (Res != FR_OK) {
+		print("f_mount failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -180,6 +182,8 @@ int FfsSdPolledExample(void)
 
 	Res = f_open(&fil, SD_File, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
 	if (Res) {
+		print("f_open failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -188,6 +192,8 @@ int FfsSdPolledExample(void)
 	 */
 	Res = f_lseek(&fil, 0);
 	if (Res) {
+		print("f_lseek failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -197,6 +203,8 @@ int FfsSdPolledExample(void)
 	Res = f_write(&fil, (const void*)SourceAddress, FileSize,
 			&NumBytesWritten);
 	if (Res) {
+		print("f_write failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -205,6 +213,8 @@ int FfsSdPolledExample(void)
 	 */
 	Res = f_lseek(&fil, 0);
 	if (Res) {
+		print("f_lseek failed the second time\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -214,6 +224,8 @@ int FfsSdPolledExample(void)
 	Res = f_read(&fil, (void*)DestinationAddress, FileSize,
 			&NumBytesRead);
 	if (Res) {
+		print("f_read failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
@@ -222,6 +234,7 @@ int FfsSdPolledExample(void)
 	 */
 	for(BuffCnt = 0; BuffCnt < FileSize; BuffCnt++){
 		if(SourceAddress[BuffCnt] != DestinationAddress[BuffCnt]){
+			print("Data comparison failed\n\r");
 			return XST_FAILURE;
 		}
 	}
@@ -231,8 +244,77 @@ int FfsSdPolledExample(void)
 	 */
 	Res = f_close(&fil);
 	if (Res) {
+		print("f_close failed\n\r");
+		handle_fresult(Res);
 		return XST_FAILURE;
 	}
 
 	return XST_SUCCESS;
+}
+
+void handle_fresult(FRESULT result) {
+	switch (result) {
+		case FR_OK:
+			print("FRESULT = FR_OK\n\r");
+			break;
+		case FR_DISK_ERR:
+			print("FRESULT = FR_DISK_ERR\n\r");
+			break;
+		case FR_INT_ERR:
+			print("FRESULT = FR_INT_ERR\n\r");
+			break;
+		case FR_NOT_READY:
+			print("FRESULT = FR_NOT_READY\n\r");
+			break;
+		case FR_NO_FILE:
+			print("FRESULT = FR_NO_FILE\n\r");
+			break;
+		case FR_NO_PATH:
+			print("FRESULT = FR_NO_PATH\n\r");
+			break;
+		case FR_INVALID_NAME:
+			print("FRESULT = FR_INVALID_NAME\n\r");
+			break;
+		case FR_DENIED:
+			print("FRESULT = FR_DENIED\n\r");
+			break;
+		case FR_EXIST:
+			print("FRESULT = FR_EXIST\n\r");
+			break;
+		case FR_INVALID_OBJECT:
+			print("FRESULT = FR_INVALID_OBJECT\n\r");
+			break;
+		case FR_WRITE_PROTECTED:
+			print("FRESULT = FR_WRITE_PROTECTED\n\r");
+			break;
+		case FR_INVALID_DRIVE:
+			print("FRESULT = FR_INVALID_DRIVE\n\r");
+			break;
+		case FR_NOT_ENABLED:
+			print("FRESULT = FR_NOT_ENABLED\n\r");
+			break;
+		case FR_NO_FILESYSTEM:
+			print("FRESULT = FR_NO_FILESYSTEM\n\r");
+			break;
+		case FR_MKFS_ABORTED:
+			print("FRESULT = FR_MKFS_ABORTED\n\r");
+			break;
+		case FR_TIMEOUT:
+			print("FRESULT = FR_TIMEOUT\n\r");
+			break;
+		case FR_LOCKED:
+			print("FRESULT = FR_LOCKED\n\r");
+			break;
+		case FR_NOT_ENOUGH_CORE:
+			print("FRESULT = FR_NOT_ENOUGH_CORE\n\r");
+			break;
+		case FR_TOO_MANY_OPEN_FILES:
+			print("FRESULT = FR_TOO_MANY_OPEN_FILES\n\r");
+			break;
+		case FR_INVALID_PARAMETER:
+			print("FRESULT = FR_INVALID_PARAMETER\n\r");
+			break;
+		default:
+			print("Returned FRESULT value is unknown\n\r");
+	}
 }
