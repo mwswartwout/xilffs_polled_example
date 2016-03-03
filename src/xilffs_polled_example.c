@@ -83,15 +83,15 @@ static char FileName[32] = "Test.txt";
 static char *SD_File;
 u32 Platform;
 
-#ifdef __ICCARM__
-#pragma data_alignment = 32
-u8 DestinationAddress[10*1024*1024];
-u8 SourceAddress[10*1024*1024];
-#pragma data_alignment = 4
-#else
-u8 DestinationAddress[10*1024*1024] __attribute__ ((aligned(32)));
-u8 SourceAddress[10*1024*1024] __attribute__ ((aligned(32)));
-#endif
+//#ifdef __ICCARM__
+//#pragma data_alignment = 32
+char DestinationAddress[32];
+char SourceAddress[32] = "Hello World";
+//#pragma data_alignment = 4
+//#else
+//u8 DestinationAddress[10*1024*1024] __attribute__ ((aligned(32)));
+//u8 SourceAddress[10*1024*1024] __attribute__ ((aligned(32)));
+//#endif
 
 #define TEST 7
 
@@ -146,7 +146,7 @@ int FfsSdPolledExample(void)
 	UINT NumBytesRead;
 	UINT NumBytesWritten;
 	u32 BuffCnt;
-	u32 FileSize = (8*1024*1024);
+	u32 FileSize = 32;
 	TCHAR *Path = "0:/";
 
 	Platform = XGetPlatform_Info();
