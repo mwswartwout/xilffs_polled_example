@@ -64,7 +64,7 @@
 #include "ff.h"
 #include "xil_cache.h"
 #include "xplatform_info.h"
-
+#include <stdio.h>
 /************************** Constant Definitions *****************************/
 
 
@@ -85,8 +85,8 @@ u32 Platform;
 
 //#ifdef __ICCARM__
 //#pragma data_alignment = 32
-char DestinationAddress[32];
-char SourceAddress[32] = "Hello World";
+//char DestinationAddress[32];
+//char SourceAddress[32];
 //#pragma data_alignment = 4
 //#else
 //u8 DestinationAddress[10*1024*1024] __attribute__ ((aligned(32)));
@@ -142,6 +142,9 @@ int main(void)
 ******************************************************************************/
 int FfsSdPolledExample(void)
 {
+	char DestinationAddress[32];
+	char SourceAddress[32];
+
 	FRESULT Res;
 	UINT NumBytesRead;
 	UINT NumBytesWritten;
@@ -189,19 +192,27 @@ int FfsSdPolledExample(void)
 
 	/*
 	 * Pointer to beginning of file .
-	 *
+	 */
 	Res = f_lseek(&fil, 0);
 	if (Res) {
 		print("f_lseek failed\n\r");
 		handle_fresult(Res);
 		return XST_FAILURE;
-	}*/
+	}
 
 	/*
 	 * Write data to file.
 	 */
+	strcpy(SourceAddress, "Hello World");
 	Res = f_write(&fil, (const void*)SourceAddress, FileSize,
 			&NumBytesWritten);
+	int i;
+	printf("%s\n", SourceAddress);
+	xil_printf("%s\n\r", SourceAddress);
+	for (i = 0; i < FileSize; i++) {
+		xil_printf("%c\n\r", SourceAddress[i]);
+	}
+	print("Done with SourceAddress\n\r");
 	if (Res) {
 		print("f_write failed\n\r");
 		handle_fresult(Res);
@@ -223,6 +234,11 @@ int FfsSdPolledExample(void)
 	 */
 	Res = f_read(&fil, (void*)DestinationAddress, FileSize,
 			&NumBytesRead);
+
+	for (i = 0; i < FileSize; i++) {
+		xil_printf("%d\n\r", DestinationAddress[i]);
+	}
+
 	if (Res) {
 		print("f_read failed\n\r");
 		handle_fresult(Res);
