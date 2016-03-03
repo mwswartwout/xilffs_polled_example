@@ -79,7 +79,7 @@ void handle_fresult(FRESULT result);
 /************************** Variable Definitions *****************************/
 static FIL fil;		/* File object */
 static FATFS fatfs;
-static char FileName[32] = "Test.bin";
+static char FileName[32] = "Test.txt";
 static char *SD_File;
 u32 Platform;
 
